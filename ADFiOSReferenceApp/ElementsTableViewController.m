@@ -59,7 +59,79 @@ static NSUInteger const NUMBER_OF_SECTIONS = 1;
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER forIndexPath:indexPath];
     
     cell.textLabel.text = [NSString stringWithFormat:@"%li",(long)indexPath.row];
+    
+    // create gestures
+    UITapGestureRecognizer *singleTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:NSSelectorFromString(@"singleTap:")];
+    singleTapGesture.numberOfTapsRequired = 1;
+    
+    UITapGestureRecognizer *twoFingerTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:NSSelectorFromString(@"doubleFingerSingleTap:")];
+    twoFingerTap.numberOfTapsRequired = 1;
+    twoFingerTap.numberOfTouchesRequired = 2;
+    
+    UITapGestureRecognizer *doubleTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:NSSelectorFromString(@"doubleTap:")];
+    doubleTapGesture.numberOfTapsRequired = 2;
+    
+    UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:NSSelectorFromString(@"longPress:")];
+    
+    [singleTapGesture requireGestureRecognizerToFail:longPress];
+    [singleTapGesture requireGestureRecognizerToFail:doubleTapGesture];
+    [singleTapGesture requireGestureRecognizerToFail:twoFingerTap];
+    
+    //Remove all gestures
+    while (cell.contentView.gestureRecognizers.count) {
+        [cell.contentView removeGestureRecognizer:[cell.contentView.gestureRecognizers objectAtIndex:0]];
+    }
+   
+    //Add Gestures
+    cell.contentView.userInteractionEnabled = true;
+    [cell.contentView addGestureRecognizer:singleTapGesture];
+    [cell.contentView addGestureRecognizer:twoFingerTap];
+    [cell.contentView addGestureRecognizer:doubleTapGesture];
+    [cell.contentView addGestureRecognizer:longPress];
+    cell.contentView.accessibilityIdentifier = [NSString stringWithFormat:@"%ld", (long)indexPath.row];
+
+    
     return cell;
+}
+
+- (void)singleTap:(UITapGestureRecognizer *)sender {
+    CGPoint touch = [sender locationInView:self.tableView];
+    NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:touch];
+    NSString *alertMessage = [NSString stringWithFormat:@"Single tap at index : %ld", (long)indexPath.row];
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Gesture Alert" message:alertMessage preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil];
+    [alert addAction:ok];
+    [self presentViewController:alert animated:NO completion:nil];
+}
+
+- (void)doubleFingerSingleTap:(UITapGestureRecognizer *)sender {
+    CGPoint touch = [sender locationInView:self.tableView];
+    NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:touch];
+    NSString *alertMessage = [NSString stringWithFormat:@"Two finger tap at index : %ld", (long)indexPath.row];
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Gesture Alert" message:alertMessage preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil];
+    [alert addAction:ok];
+    [self presentViewController:alert animated:NO completion:nil];
+}
+
+- (void)doubleTap:(UITapGestureRecognizer *)sender {
+    CGPoint touch = [sender locationInView:self.tableView];
+    NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:touch];
+    NSString *alertMessage = [NSString stringWithFormat:@"Double tap at index : %ld", (long)indexPath.row];
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Gesture Alert" message:alertMessage preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil];
+    [alert addAction:ok];
+    [self presentViewController:alert animated:NO completion:nil];
+}
+
+- (void)longPress:(UITapGestureRecognizer *)sender {
+    CGPoint touch = [sender locationInView:self.tableView];
+    NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:touch];
+    NSString *alertMessage = [NSString stringWithFormat:@"Long press at index : %ld", (long)indexPath.row];
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Gesture Alert" message:alertMessage preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil];
+    [alert addAction:ok];
+    [self presentViewController:alert animated:NO completion:nil];
 }
 
 @end
